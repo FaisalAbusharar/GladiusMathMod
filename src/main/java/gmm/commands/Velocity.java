@@ -1,6 +1,7 @@
 package gmm.commands;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.command.CommandManager;
@@ -15,16 +16,16 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class Velocity {
 
-    public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            CommandManager.literal("velocity")
-                    .then(argument("Vx", FloatArgumentType.floatArg()).
-                            then( argument("Vy", FloatArgumentType.floatArg()).
-                                    then(argument( "Vz", FloatArgumentType.floatArg()))))
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+        dispatcher.register(
+                    literal("velocity")
+                        .then(argument("Vx", FloatArgumentType.floatArg())
+                                .then( argument("Vy", FloatArgumentType.floatArg())
+                                    .then(argument( "Vz", FloatArgumentType.floatArg())
                     .executes(context -> {
+
                 ServerCommandSource source = context.getSource();
 
-                source.sendFeedback(() -> Text.literal("Velocity of player changed."), true);
                 ServerPlayerEntity player = context.getSource().getPlayer();
 
                 float VelocityX = FloatArgumentType.getFloat(context,"Vx");
@@ -32,9 +33,14 @@ public class Velocity {
                 float VelocityZ = FloatArgumentType.getFloat(context,"Vz");
 
                 player.addVelocity(new Vec3d(VelocityX, VelocityY, VelocityZ));
+                player.velocityModified = true;
 
+                source.sendFeedback(() -> Text.literal("Velocity of player changed."), true);
                 return Command.SINGLE_SUCCESS;
-            });
-        });
+                    })
+                                    )
+                                )
+                        )
+            );
     }
-}
+    }

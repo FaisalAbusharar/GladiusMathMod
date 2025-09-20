@@ -23,36 +23,38 @@ public class GladiusMathMod implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
+            CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+                dispatcher.register(
+                        CommandManager.literal("gmm")
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    try {
+                                        String modId = "gladius-math-mod";
+                                        String version = FabricLoader.getInstance()
+                                                .getModContainer(modId)
+                                                .map(mod -> mod.getMetadata().getVersion().getFriendlyString())
+                                                .orElse("unknown");
 
-        Velocity.register();
+                                        source.sendFeedback(() -> Text.literal("Running GMM version " + version), true);
+                                    } catch (Exception e) {
+                                        LOGGER.error("Error occurred!", e);
+                                        source.sendFeedback(() -> Text.literal("An internal error has occurred."), true);
+                                    }
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
+
+                );
+                Velocity.register(dispatcher);
 
 
-            CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
-                    CommandManager.literal("gmm")
-                            .executes(context -> {
-                                ServerCommandSource source = context.getSource();
-                                try {
-                                    String modId = "gladius-math-mod";
-                                    String version = FabricLoader.getInstance()
-                                            .getModContainer(modId)
-                                            .map(mod -> mod.getMetadata().getVersion().getFriendlyString())
-                                            .orElse("unknown");
-
-                                    source.sendFeedback(() -> Text.literal("Running GMM version " + version), true);
-                                }  catch (Exception e) {
-                                LOGGER.error("Error occurred!", e);
-                                source.sendFeedback(() -> Text.literal("An internal error has occurred."), true);
-        }
-
-                                return Command.SINGLE_SUCCESS;
-                            })
-            ));
-
+            });
 
 
 
