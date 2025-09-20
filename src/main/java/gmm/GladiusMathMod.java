@@ -1,5 +1,6 @@
 package gmm;
 
+import gmm.commands.Sphere;
 import net.fabricmc.api.ModInitializer;
 
 import com.mojang.brigadier.Command;
@@ -52,6 +53,7 @@ public class GladiusMathMod implements ModInitializer {
 
                 );
                 Velocity.register(dispatcher);
+                Sphere.register(dispatcher);
 
 
             });
