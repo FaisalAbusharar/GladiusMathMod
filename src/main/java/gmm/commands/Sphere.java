@@ -63,20 +63,48 @@ public class Sphere {
                                                             int maxZ = Math.max(start.getZ(), end.getZ());
 
 
-                                                            for (int x = minX; x <= maxX; x++) {
-                                                                world.setBlockState(new BlockPos(x, pos.getY(), pos.getZ()), block.getDefaultState());
-                                                            }
-                                                            for (int y = minY; y <= maxY; y++)
-                                                            {
-                                                                world.setBlockState(new BlockPos(pos.getX(), y, pos.getZ()), block.getDefaultState());
+//                                                            for (int x = minX; x <= maxX; x++) {
+//                                                                world.setBlockState(new BlockPos(x, pos.getY(), pos.getZ()), block.getDefaultState());
+//                                                            }
+//                                                            for (int y = minY; y <= maxY; y++)
+//                                                            {
+//                                                                world.setBlockState(new BlockPos(pos.getX(), y, pos.getZ()), block.getDefaultState());
+//
+//                                                            }
+//
+//                                                            for (int z = minZ; z <= maxZ; z++)
+//                                                            {
+//                                                                world.setBlockState(new BlockPos(pos.getX(), pos.getY(), z), block.getDefaultState());
+//
+//                                                            }
+
+
+                                                            // cx and cz = circle center
+                                                            // (x-cx)^2 + (x-cz)^ <= r^2
+                                                            // circle center is pos argument. (cx, cz)
+                                                            // r is radii argument
+
+                                                            // for(int x = cx -r; x <= cx + r; x++)
+
+                                                            for(int x = pos.getX() - r; x <= pos.getX() + r; x++){
+                                                                for(int z = pos.getZ() - r; z <= pos.getZ() + r; z++){
+                                                                    int dx = x - pos.getX(); // horizontal distance from current block x to the center x
+                                                                    int dz = z - pos.getZ(); // horizontal distance from current block z to the center z
+
+                                                                    // This asks if the block is within the circle edge or not, we use the formula which says that
+                                                                    // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
+                                                                    if(dx*dx + dz*dz <= r*r) {
+                                                                        world.setBlockState(new BlockPos(x, pos.getY(), z), block.getDefaultState());
+                                                                        context.getSource().sendFeedback(() -> Text.literal("should place"), true);
+
+                                                                    }
+                                                                    context.getSource().sendFeedback(() -> Text.literal("In for loop"), true);
+
+                                                                }
 
                                                             }
 
-                                                            for (int z = minZ; z <= maxZ; z++)
-                                                            {
-                                                                world.setBlockState(new BlockPos(pos.getX(), pos.getY(), z), block.getDefaultState());
 
-                                                            }
 
 
                                                             context.getSource().sendFeedback(() -> Text.literal("Placed " + blockName + " at " + pos), true);
