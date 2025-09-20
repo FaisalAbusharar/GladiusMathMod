@@ -88,8 +88,8 @@ public class Sphere {
 
                                                             for(int x = pos.getX() - r; x <= pos.getX() + r; x++){
                                                                 for(int z = pos.getZ() - r; z <= pos.getZ() + r; z++){
-                                                                    int dx = x - pos.getX(); // horizontal distance from current block x to the center x
-                                                                    int dz = z - pos.getZ(); // horizontal distance from current block z to the center z
+                                                                    double dx = x + 0.5 - pos.getX(); // horizontal distance from current block x to the center x
+                                                                    double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block z to the center z
 
                                                                     // This asks if the block is within the circle edge or not, we use the formula which says that
                                                                     // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
