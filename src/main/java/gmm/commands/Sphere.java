@@ -33,6 +33,8 @@ public class Sphere {
                                                             ServerCommandSource source = context.getSource();
 
                                                             String blockName = StringArgumentType.getString(context, "Block");
+                                                            java.lang.Integer r = IntegerArgumentType.getInteger(context, "Radius");
+
                                                             Identifier id = new Identifier(blockName);
 
                                                             Block block = Registries.BLOCK.get(id);
@@ -45,11 +47,39 @@ public class Sphere {
 
                                                             BlockPos pos = new BlockPos(BlockPosArgumentType.getBlockPos(context, "pos"));
 
-                                                            world.setBlockState(pos, block.getDefaultState());
+
+                                                            // Circle code.
+//                                                            world.setBlockState(pos, block.getDefaultState());
+
+
+                                                            BlockPos start = new BlockPos(pos.add(r, r ,r));
+                                                            BlockPos end = new BlockPos(pos.add(-r, -r ,-r));
+
+                                                            int minX = Math.min(start.getX(), end.getX());
+                                                            int maxX = Math.max(start.getX(), end.getX());
+                                                            int minY = Math.min(start.getY(), end.getY());
+                                                            int maxY = Math.max(start.getY(), end.getY());
+                                                            int minZ = Math.min(start.getZ(), end.getZ());
+                                                            int maxZ = Math.max(start.getZ(), end.getZ());
+
+
+                                                            for (int x = minX; x <= maxX; x++) {
+                                                                world.setBlockState(new BlockPos(x, pos.getY(), pos.getZ()), block.getDefaultState());
+                                                            }
+                                                            for (int y = minY; y <= maxY; y++)
+                                                            {
+                                                                world.setBlockState(new BlockPos(pos.getX(), y, pos.getZ()), block.getDefaultState());
+
+                                                            }
+
+                                                            for (int z = minZ; z <= maxZ; z++)
+                                                            {
+                                                                world.setBlockState(new BlockPos(pos.getX(), pos.getY(), z), block.getDefaultState());
+
+                                                            }
+
 
                                                             context.getSource().sendFeedback(() -> Text.literal("Placed " + blockName + " at " + pos), true);
-
-
                                                             return Command.SINGLE_SUCCESS;
                                                         })
                                                 )
