@@ -33,8 +33,6 @@ public class Sphere {
 
                                                         .executes(context -> {
 
-                                                            ServerCommandSource source = context.getSource();
-
                                                             String blockName = StringArgumentType.getString(context, "Block");
                                                             java.lang.Integer r = IntegerArgumentType.getInteger(context, "Radius");
 
