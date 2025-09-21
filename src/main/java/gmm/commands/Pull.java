@@ -3,6 +3,7 @@ package gmm.commands;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.ServerCommandSource;
@@ -18,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -27,7 +29,8 @@ public class Pull {
         dispatcher.register(
                 literal("pull")
                         .then(argument("pull_center", BlockPosArgumentType.blockPos())
-                                .then(argument("radius", IntegerArgumentType.integer())
+                                .then(argument("pull_radius", IntegerArgumentType.integer())
+                                        .then(argument("pull_strength", FloatArgumentType.floatArg())
                                                         .executes(context -> {
 
 
@@ -37,30 +40,34 @@ public class Pull {
                                 //Fg is the force applied
                                 //use F=ma to accelerate, where f and m are known.
 
+                                try {
+                                    ServerWorld world = context.getSource().getWorld();
+                                    Integer r = IntegerArgumentType.getInteger(context, "pull_radius");
+                                    float ps = FloatArgumentType.getFloat(context, "pull_strength");
 
-                                ServerWorld world = context.getSource().getWorld();
-                                Integer r  = IntegerArgumentType.getInteger(context, "radius");
 
-                                BlockPos pos = new BlockPos(BlockPosArgumentType.getBlockPos(context, "pull_center"));
+                                    BlockPos pos = new BlockPos(BlockPosArgumentType.getBlockPos(context, "pull_center"));
 
-                                float G = 1;
-                                float m1, m2 = 1;
 
-                                Box box = new Box(
-                                  pos.getX() - r, pos.getY() - r, pos.getZ() - r,
-                                  pos.getX() + r, pos.getY() + r, pos.getZ() + r
-                                );
+                                    Box box = new Box(
+                                            pos.getX() - r, pos.getY() - r, pos.getZ() - r,
+                                            pos.getX() + r, pos.getY() + r, pos.getZ() + r
+                                    );
 
-                                List<LivingEntity> entities = world.getEntitiesByClass(
-                                        LivingEntity.class,
-                                        box,
-                                        entity -> true
-                                );
+                                    List<LivingEntity> entities = world.getEntitiesByClass(
+                                            LivingEntity.class,
+                                            box,
+                                            entity -> true
+                                    );
 
-                                for (LivingEntity e: entities) {
-                                    Vec3d direction = new Vec3d(pos.getX() - e.getX(), pos.getY() - e.getY(), pos.getZ() - e.getZ());
-                                    e.addVelocity(direction);
-                                    e.velocityModified = true;
+
+                                    for (LivingEntity e : entities) {
+                                        Vec3d direction = new Vec3d(pos.getX() - e.getX(), pos.getY() - e.getY(), pos.getZ() - e.getZ());
+                                        e.addVelocity(direction.normalize().multiply(ps));
+                                        e.velocityModified = true;
+                                    }
+                                } catch (Exception e) {
+                                    LOGGER.error("An error has occurred " + e);
                                 }
 
                                 return Command.SINGLE_SUCCESS;
@@ -71,6 +78,6 @@ public class Pull {
                           )
 
 
-                        )));
+                        ))));
     }
 }
