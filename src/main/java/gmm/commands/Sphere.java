@@ -12,6 +12,7 @@ import net.minecraft.command.argument.BlockPosArgumentType;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerWorld;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
@@ -28,6 +29,8 @@ public class Sphere {
                         .then(argument("pos", BlockPosArgumentType.blockPos())
                                         .then(argument("Radius",IntegerArgumentType.integer())
                                                 .then(argument("Block", StringArgumentType.string())
+                                                        .then(argument("Hollow", BoolArgumentType.bool())
+
                                                         .executes(context -> {
 
                                                             ServerCommandSource source = context.getSource();
@@ -52,15 +55,15 @@ public class Sphere {
 //                                                            world.setBlockState(pos, block.getDefaultState());
 
 
-                                                            BlockPos start = new BlockPos(pos.add(r, r ,r));
-                                                            BlockPos end = new BlockPos(pos.add(-r, -r ,-r));
-
-                                                            int minX = Math.min(start.getX(), end.getX());
-                                                            int maxX = Math.max(start.getX(), end.getX());
-                                                            int minY = Math.min(start.getY(), end.getY());
-                                                            int maxY = Math.max(start.getY(), end.getY());
-                                                            int minZ = Math.min(start.getZ(), end.getZ());
-                                                            int maxZ = Math.max(start.getZ(), end.getZ());
+//                                                            BlockPos start = new BlockPos(pos.add(r, r ,r));
+//                                                            BlockPos end = new BlockPos(pos.add(-r, -r ,-r));
+//
+//                                                            int minX = Math.min(start.getX(), end.getX());
+//                                                            int maxX = Math.max(start.getX(), end.getX());
+//                                                            int minY = Math.min(start.getY(), end.getY());
+//                                                            int maxY = Math.max(start.getY(), end.getY());
+//                                                            int minZ = Math.min(start.getZ(), end.getZ());
+//                                                            int maxZ = Math.max(start.getZ(), end.getZ());
 
 
 //                                                            for (int x = minX; x <= maxX; x++) {
@@ -96,12 +99,19 @@ public class Sphere {
 
                                                                         // This asks if the block is within the circle edge or not, we use the formula which says that
                                                                         // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
-                                                                        if (dx * dx + dz * dz + dy*dy <= r * r) {
-                                                                            world.setBlockState(new BlockPos(x, y, z), block.getDefaultState());
-                                                                            context.getSource().sendFeedback(() -> Text.literal("should place"), true);
-
+                                                                        double vectors = dx * dx + dz * dz + dy * dy;
+                                                                        Boolean isHollow = BoolArgumentType.getBool(context,"Hollow");
+                                                                        if (isHollow) {
+                                                                            // Only place blocks on the hollow shell
+                                                                            if (vectors <= (r + 0.5) * (r + 0.5) && vectors >= (r - 1) * (r - 1)) {
+                                                                                world.setBlockState(new BlockPos(x, y, z), block.getDefaultState());
+                                                                            }
+                                                                        } else {
+                                                                            // Place all blocks inside the sphere
+                                                                            if (vectors <= (r + 0.5) * (r + 0.5)) {
+                                                                                world.setBlockState(new BlockPos(x, y, z), block.getDefaultState());
+                                                                            }
                                                                         }
-                                                                        context.getSource().sendFeedback(() -> Text.literal("In for loop"), true);
 
                                                                     }
                                                                 }
@@ -115,6 +125,7 @@ public class Sphere {
                                                         })
                                                 )
                                         ))
+                        )
                                 );
 
     }
