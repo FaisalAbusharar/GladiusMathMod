@@ -87,21 +87,24 @@ public class Sphere {
                                                             // for(int x = cx -r; x <= cx + r; x++)
 
                                                             for(int x = pos.getX() - r; x <= pos.getX() + r; x++){
-                                                                for(int z = pos.getZ() - r; z <= pos.getZ() + r; z++){
-                                                                    double dx = x + 0.5 - pos.getX(); // horizontal distance from current block x to the center x
-                                                                    double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block z to the center z
+                                                                for(int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
+                                                                    for (int y = pos.getY() - r; y <= pos.getY() + r; y++) {
+                                                                        double dx = x + 0.5 - pos.getX(); // horizontal distance from current block x to the center x
+                                                                        double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block z to the center z
+                                                                        double dy = y + 0.5 - pos.getY(); // vertical distance from current block z to the center y
 
-                                                                    // This asks if the block is within the circle edge or not, we use the formula which says that
-                                                                    // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
-                                                                    if(dx*dx + dz*dz <= r*r) {
-                                                                        world.setBlockState(new BlockPos(x, pos.getY(), z), block.getDefaultState());
-                                                                        context.getSource().sendFeedback(() -> Text.literal("should place"), true);
+
+                                                                        // This asks if the block is within the circle edge or not, we use the formula which says that
+                                                                        // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
+                                                                        if (dx * dx + dz * dz + dy*dy <= r * r) {
+                                                                            world.setBlockState(new BlockPos(x, y, z), block.getDefaultState());
+                                                                            context.getSource().sendFeedback(() -> Text.literal("should place"), true);
+
+                                                                        }
+                                                                        context.getSource().sendFeedback(() -> Text.literal("In for loop"), true);
 
                                                                     }
-                                                                    context.getSource().sendFeedback(() -> Text.literal("In for loop"), true);
-
                                                                 }
-
                                                             }
 
 
