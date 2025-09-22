@@ -1,6 +1,7 @@
 package gmm;
 
-import gmm.commands.Pull;
+import gmm.commands.ImmensePull;
+import gmm.commands.SmoothPull;
 import gmm.commands.Sphere;
 import net.fabricmc.api.ModInitializer;
 
@@ -13,9 +14,6 @@ import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import gmm.commands.Velocity;
-
-
-import java.util.function.Supplier;
 
 public class GladiusMathMod implements ModInitializer {
     public static final String MOD_ID = "gmm";
@@ -55,7 +53,8 @@ public class GladiusMathMod implements ModInitializer {
                 );
                 Velocity.register(dispatcher);
                 Sphere.register(dispatcher);
-                Pull.register(dispatcher);
+                SmoothPull.register(dispatcher);
+                ImmensePull.register(dispatcher);
 
 
             });

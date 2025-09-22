@@ -16,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
@@ -25,11 +24,11 @@ import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class Pull {
+public class SmoothPull {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                literal("pull")
+                literal("gpull")
                         .then(argument("pull_center", BlockPosArgumentType.blockPos())
                                 .then(argument("pull_radius", IntegerArgumentType.integer())
                                         .then(argument("pull_strength", FloatArgumentType.floatArg())
@@ -67,11 +66,26 @@ public class Pull {
 
 
 
+                                    Vec3d targetPos = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                                    double speed = 0.5; // blocks per tick
+
+
                                     for (LivingEntity e : entities) {
-                                        Vec3d direction = new Vec3d(pos.getX() - e.getX(), pos.getY() - e.getY(), pos.getZ() - e.getZ());
-                                        e.addVelocity(direction.normalize().multiply(ps));
+                                        Vec3d direction = targetPos.subtract(e.getPos());
+                                        double distance = direction.length();
+
+                                        if (distance < 0.1) {
+                                            e.setVelocity(Vec3d.ZERO); // stop entity
+                                        } else {
+                                            // clamp velocity so we never overshoot
+                                            Vec3d move = direction.normalize().multiply(Math.min(speed, distance));
+                                            e.setVelocity(move);
+                                        }
+
                                         e.velocityModified = true;
                                     }
+
+
                                 } catch (Exception e) {
                                     LOGGER.error("An error has occurred " + e);
                                 }
