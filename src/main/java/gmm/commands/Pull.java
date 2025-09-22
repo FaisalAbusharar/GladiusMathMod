@@ -3,9 +3,11 @@ package gmm.commands;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 
@@ -31,6 +33,7 @@ public class Pull {
                         .then(argument("pull_center", BlockPosArgumentType.blockPos())
                                 .then(argument("pull_radius", IntegerArgumentType.integer())
                                         .then(argument("pull_strength", FloatArgumentType.floatArg())
+                                                .then(argument("pull_player", BoolArgumentType.bool())
                                                         .executes(context -> {
 
 
@@ -44,6 +47,7 @@ public class Pull {
                                     ServerWorld world = context.getSource().getWorld();
                                     Integer r = IntegerArgumentType.getInteger(context, "pull_radius");
                                     float ps = FloatArgumentType.getFloat(context, "pull_strength");
+                                    boolean pullPlayer = BoolArgumentType.getBool(context,"pull_player");
 
 
                                     BlockPos pos = new BlockPos(BlockPosArgumentType.getBlockPos(context, "pull_center"));
@@ -54,11 +58,13 @@ public class Pull {
                                             pos.getX() + r, pos.getY() + r, pos.getZ() + r
                                     );
 
-                                    List<LivingEntity> entities = world.getEntitiesByClass(
-                                            LivingEntity.class,
-                                            box,
-                                            entity -> true
-                                    );
+
+                                        List<LivingEntity> entities = world.getEntitiesByClass(
+                                                LivingEntity.class,
+                                                box,
+                                                entity -> !pullPlayer ? !(entity instanceof PlayerEntity) : true
+                                        );
+
 
 
                                     for (LivingEntity e : entities) {
@@ -78,6 +84,6 @@ public class Pull {
                           )
 
 
-                        ))));
+                        )))));
     }
 }
