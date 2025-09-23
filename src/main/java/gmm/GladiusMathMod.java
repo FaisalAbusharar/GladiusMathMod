@@ -53,6 +53,7 @@ public class GladiusMathMod implements ModInitializer {
                 SmoothPull.register(dispatcher);
                 ImmensePull.register(dispatcher);
                 Projectile.register(dispatcher);
+                Circle.register(dispatcher);
 
 
             });
