@@ -6,9 +6,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.block.Block;
-import net.minecraft.command.CommandSource;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 
@@ -19,10 +17,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
 
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;

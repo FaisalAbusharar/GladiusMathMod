@@ -16,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
