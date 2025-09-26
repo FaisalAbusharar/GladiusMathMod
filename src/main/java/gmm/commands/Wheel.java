@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
 
 
+import java.util.Objects;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -31,7 +32,6 @@ public class Wheel {
                         .then(argument("pos", BlockPosArgumentType.blockPos())
                                 .then(argument("Radius",IntegerArgumentType.integer())
                                                 .then(argument("Block", StringArgumentType.string())
-                                                        .then(argument("Hollow", BoolArgumentType.bool())
                                                                 .then(argument("Vertical", BoolArgumentType.bool())
                                                                                 .then(argument("Facing", StringArgumentType.string())
 
@@ -59,31 +59,19 @@ public class Wheel {
                                                                                                         world.setBlockState(pos, block.getDefaultState());
 
 
-//                                                            BlockPos start = new BlockPos(pos.add(r, r ,r));
-//                                                            BlockPos end = new BlockPos(pos.add(-r, -r ,-r));
-//
-//                                                            int minX = Math.min(start.getX(), end.getX());
-//                                                            int maxX = Math.max(start.getX(), end.getX());
-//                                                            int minY = Math.min(start.getY(), end.getY());
-//                                                            int maxY = Math.max(start.getY(), end.getY());
-//                                                            int minZ = Math.min(start.getZ(), end.getZ());
-//                                                            int maxZ = Math.max(start.getZ(), end.getZ());
-//
-//
-//                                                            for (int x = minX; x <= maxX; x++) {
-//                                                                world.setBlockState(new BlockPos(x, pos.getY(), pos.getZ()), block.getDefaultState());
-//                                                            }
-//                                                            for (int y = minY; y <= maxY; y++)
-//                                                            {
-//                                                                world.setBlockState(new BlockPos(pos.getX(), y, pos.getZ()), block.getDefaultState());
-//
-//                                                            }
-//
-//                                                            for (int z = minZ; z <= maxZ; z++)
-//                                                            {
-//                                                                world.setBlockState(new BlockPos(pos.getX(), pos.getY(), z), block.getDefaultState());
-//
-//                                                            }
+                                                                                BlockPos start = new BlockPos(pos.add(r, r ,r));
+                                                                                BlockPos end = new BlockPos(pos.add(-r, -r ,-r));
+
+                                                                                int minX = Math.min(start.getX(), end.getX());
+                                                                                int maxX = Math.max(start.getX(), end.getX());
+                                                                                int minZ = Math.min(start.getZ(), end.getZ());
+                                                                                int maxZ = Math.max(start.getZ(), end.getZ());
+                                                                                int minY = Math.min(start.getY(), end.getY());
+                                                                                int maxY = Math.max(start.getY(), end.getY());
+
+
+
+
                                                                                                         if (!BoolArgumentType.getBool(context,"Vertical")) {
                                                                                                             for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
                                                                                                                 for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
@@ -92,75 +80,87 @@ public class Wheel {
                                                                                                                     double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block z to the center z
 //
 
+
+
+                                                                                                                    for (int rx = minX; rx <= maxX; rx++) {
+                                                                                                                        world.setBlockState(new BlockPos(rx, pos.getY(), pos.getZ()), block.getDefaultState());
+                                                                                                                    }
+
+                                                                                                                    for (int rz = minZ; rz <= maxZ; rz++)
+                                                                                                                    {
+                                                                                                                        world.setBlockState(new BlockPos(pos.getX(), pos.getY(), rz), block.getDefaultState());
+                                                                                                                    }
+
                                                                                                                     // This asks if the block is within the circle edge or not, we use the formula which says that
                                                                                                                     // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
                                                                                                                     double vectors = dx * dx + dz * dz;
-                                                                                                                    Boolean isHollow = BoolArgumentType.getBool(context, "Hollow");
-                                                                                                                    if (isHollow) {
-                                                                                                                        // Only place blocks on the hollow shell
+
+
+
                                                                                                                         if (vectors <= (r + 0.5) * (r + 0.5) && vectors >= (r - 1) * (r - 1)) {
                                                                                                                             world.setBlockState(new BlockPos(x, pos.getY(), z), block.getDefaultState());
                                                                                                                         }
-                                                                                                                    } else {
-                                                                                                                        // Place all blocks inside the sphere
-                                                                                                                        if (vectors <= (r + 0.5) * (r + 0.5)) {
-                                                                                                                            world.setBlockState(new BlockPos(x, pos.getY(), z), block.getDefaultState());
-                                                                                                                        }
-                                                                                                                    }
+
+
 
                                                                                                                 }
                                                                                                             }
                                                                                                         } else {
                                                                                                             String facing = StringArgumentType.getString(context,"Facing");
-                                                                                                            if(facing == "x") {
+                                                                                                            if(Objects.equals(facing, "x")) {
                                                                                                                 for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
-                                                                                                                    for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
+                                                                                                                    for (int y = pos.getY() - r; y <= pos.getY() + r; y++) {
 //
                                                                                                                         double dx = x + 0.5 - pos.getX(); // horizontal distance from current block x to the center x
                                                                                                                         double dy = y + 0.5 - pos.getY(); // horizontal distance from current block z to the center z
 //
+                                                                                                                        for (int rx = minX; rx <= maxX; rx++) {
+                                                                                                                            world.setBlockState(new BlockPos(rx, pos.getY(), pos.getZ()), block.getDefaultState());
+                                                                                                                        }
+
+                                                                                                                        for (int ry = minY; ry <= maxY; ry++)
+                                                                                                                        {
+                                                                                                                            world.setBlockState(new BlockPos(pos.getX(), ry, pos.getZ()), block.getDefaultState());
+                                                                                                                        }
+
 
                                                                                                                         // This asks if the block is within the circle edge or not, we use the formula which says that
                                                                                                                         // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
                                                                                                                         double vectors = dx * dx + dy * dy;
-                                                                                                                        Boolean isHollow = BoolArgumentType.getBool(context, "Hollow");
-                                                                                                                        if (isHollow) {
-                                                                                                                            // Only place blocks on the hollow shell
+
+
                                                                                                                             if (vectors <= (r + 0.5) * (r + 0.5) && vectors >= (r - 1) * (r - 1)) {
                                                                                                                                 world.setBlockState(new BlockPos(x, y, pos.getZ()), block.getDefaultState());
-                                                                                                                            }
-                                                                                                                        } else {
-                                                                                                                            // Place all blocks inside the sphere
-                                                                                                                            if (vectors <= (r + 0.5) * (r + 0.5)) {
-                                                                                                                                world.setBlockState(new BlockPos(x, y, pos.getZ()), block.getDefaultState());
-                                                                                                                            }
+
                                                                                                                         }
                                                                                                                     }
                                                                                                                 }
                                                                                                             }
 
-                                                                                                            if(facing=="z") {
-                                                                                                                for (int z = pos.getZ() - r; z <= pos.getX() + r; z++) {
-                                                                                                                    for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
+                                                                                                            if(Objects.equals(facing, "z")) {
+                                                                                                                for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
+                                                                                                                    for (int y = pos.getY() - r; y <= pos.getY() + r; y++) {
 //
                                                                                                                         double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block x to the center x
                                                                                                                         double dy = y + 0.5 - pos.getY(); // horizontal distance from current block z to the center z
 //
+                                                                                                                        for (int rz = minZ; rz <= maxZ; rz++)
+                                                                                                                        {
+                                                                                                                            world.setBlockState(new BlockPos(pos.getX(), pos.getY(), rz), block.getDefaultState());
+                                                                                                                        }
+
+                                                                                                                        for (int ry = minY; ry <= maxY; ry++)
+                                                                                                                        {
+                                                                                                                            world.setBlockState(new BlockPos(pos.getX(), ry, pos.getZ()), block.getDefaultState());
+                                                                                                                        }
 
                                                                                                                         // This asks if the block is within the circle edge or not, we use the formula which says that
                                                                                                                         // the sum of squares of distances from the center (dx² + dz²) must be less than or equal to the radius squared (r²)
                                                                                                                         double vectors = dz * dz + dy * dy;
-                                                                                                                        Boolean isHollow = BoolArgumentType.getBool(context, "Hollow");
-                                                                                                                        if (isHollow) {
-                                                                                                                            // Only place blocks on the hollow shell
+
                                                                                                                             if (vectors <= (r + 0.5) * (r + 0.5) && vectors >= (r - 1) * (r - 1)) {
                                                                                                                                 world.setBlockState(new BlockPos(pos.getX(), y, z), block.getDefaultState());
-                                                                                                                            }
-                                                                                                                        } else {
-                                                                                                                            // Place all blocks inside the sphere
-                                                                                                                            if (vectors <= (r + 0.5) * (r + 0.5)) {
-                                                                                                                                world.setBlockState(new BlockPos(pos.getX(), y, z), block.getDefaultState());
-                                                                                                                            }
+
                                                                                                                         }
                                                                                                                     }
                                                                                                                 }
@@ -177,7 +177,7 @@ public class Wheel {
                                                                                                     } catch (Exception e) {LOGGER.error("Error " + e);}
                                                                                                     return Command.SINGLE_SUCCESS;
                                                                                                 })
-                                                                                )
+
                                                                 )))
                                 )));
 

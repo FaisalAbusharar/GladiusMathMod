@@ -115,7 +115,7 @@ public class Circle {
                                                                 String facing = StringArgumentType.getString(context,"Facing");
                                                                 if(Objects.equals(facing, "x")) {
                                                                 for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
-                                                                    for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
+                                                                    for (int y = pos.getY() - r; y <= pos.getY() + r; y++) {
 //
                                                                         double dx = x + 0.5 - pos.getX(); // horizontal distance from current block x to the center x
                                                                         double dy = y + 0.5 - pos.getY(); // horizontal distance from current block z to the center z
@@ -142,7 +142,7 @@ public class Circle {
 
                                                                 if(Objects.equals(facing, "z")) {
                                                                     for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
-                                                                        for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
+                                                                        for (int y = pos.getY() - r; y <= pos.getY() + r; y++) {
 //
                                                                             double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block x to the center x
                                                                             double dy = y + 0.5 - pos.getY(); // horizontal distance from current block z to the center z
