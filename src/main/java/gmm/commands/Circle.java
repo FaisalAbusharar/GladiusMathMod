@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
 
 
+import java.util.Objects;
+
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -55,7 +57,7 @@ public class Circle {
 
 
 
-                                                            world.setBlockState(pos, block.getDefaultState());
+//                                                            world.setBlockState(pos, block.getDefaultState());
 
 
 //                                                            BlockPos start = new BlockPos(pos.add(r, r ,r));
@@ -111,7 +113,7 @@ public class Circle {
                                                                 }
                                                             } else {
                                                                 String facing = StringArgumentType.getString(context,"Facing");
-                                                                if(facing == "x") {
+                                                                if(Objects.equals(facing, "x")) {
                                                                 for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
                                                                     for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
 //
@@ -138,8 +140,8 @@ public class Circle {
                                                                     }
                                                                 }
 
-                                                                if(facing=="z") {
-                                                                    for (int z = pos.getZ() - r; z <= pos.getX() + r; z++) {
+                                                                if(Objects.equals(facing, "z")) {
+                                                                    for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
                                                                         for (int y = pos.getY() - r; y <= pos.getZ() + r; y++) {
 //
                                                                             double dz = z + 0.5 - pos.getZ(); // horizontal distance from current block x to the center x
