@@ -55,6 +55,7 @@ public class GladiusMathMod implements ModInitializer {
                 Projectile.register(dispatcher);
                 Circle.register(dispatcher);
                 Wheel.register(dispatcher);
+                Nuke.register(dispatcher);
 
 
             });
