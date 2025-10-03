@@ -12,6 +12,8 @@ import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Parameter;
+
 public class GladiusMathMod implements ModInitializer {
     public static final String MOD_ID = "gmm";
 
@@ -56,6 +58,7 @@ public class GladiusMathMod implements ModInitializer {
                 Circle.register(dispatcher);
                 Wheel.register(dispatcher);
                 Nuke.register(dispatcher);
+                ParticleSphere.register(dispatcher, registryAccess);
 
 
             });
